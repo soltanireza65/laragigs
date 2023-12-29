@@ -1,4 +1,4 @@
-cheatsheet
+## Cheatsheet
 
 create model and migration with artisan
 
@@ -10,4 +10,10 @@ seed the database
 
 ```bash
 php artisan db:seed
+```
+
+refresh db and run seeder
+
+```bash
+php artisan migrate:fresh --seed
 ```
