@@ -2,29 +2,36 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Listing
+class Listing extends Model
 {
-    public static function all()
+    use HasFactory;
+
+
+    protected $fillable = ['title', 'company', 'location', 'website', 'email', 'description', 'tags'];
+
+
+    public function scopeFilter($query, array $filters)
     {
-        return [
-            [
-                'id' => 1,
-                'title' => 'My First Listing',
-                'description' => 'My First Listing',
-            ],
-            [
-                'id' => 2,
-                'title' => 'My Second Listing',
-                'description' => 'My Second Listing',
-            ],
-        ];
+        if ($filters['tag'] ?? false) {
+            $query->where('tag', 'like', '%' . request('tag') . '%');
+        }
+        if ($filters['search'] ?? false) {
+            $query
+                ->where('title', 'like', '%' . request('search') . '%')
+                ->orWhere('description', 'like', '%' . request('search') . '%')
+                ->orWhere('tags', 'like', '%' . request('search') . '%');
+        }
+        // $query->when($filters['search'] ?? false, function ($query, $search) {
+        //     return $query->where('title', 'like', '%' . $search . '%')
+        //         ->orWhere('description', 'like', '%' . $search . '%');
+        // });
     }
 
-    public static function find($id)
+    public function user()
     {
-        $listings = static::all();
-
-        return $listings[$id - 1];
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
